@@ -1,0 +1,15 @@
+{
+  "name": "node-addon-hello",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "configure": "node-gyp configure",
+    "build": "node-gyp build",
+    "clean": "node-gyp clean"
+  },
+  "devDependencies": {
+    "node-gyp": "^6.1.0"
+  }
+}
