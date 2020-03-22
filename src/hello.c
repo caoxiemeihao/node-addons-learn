@@ -3,20 +3,20 @@
 #include <string.h>
 
 napi_value Hello(napi_env env, napi_callback_info info) {
-	size_t argc = 1;         // Ö»½ÓÊÜÒ»¸ö²ÎÊı
-	napi_value argv;         // ½ÓÊÕµ½µÄ²ÎÊı
+	size_t argc = 1;         // åªæ¥å—ä¸€ä¸ªå‚æ•°
+	napi_value argv;         // æ¥æ”¶åˆ°çš„å‚æ•°
 	char n[40];
 	char hello[90] = "Hello ";
 	napi_value result;
-	napi_get_cb_info(env, info, &argc, &argv, NULL, NULL);                     // »ñÈ¡½ÓÊÕ²ÎÊı
-	napi_get_value_string_utf8(env, argv, n, sizeof(n), NULL);                 // ½«½ÓÊÕµ½µÄ²ÎÊı×ª»»Îª C ÓïÑÔÀàĞÍ
-	napi_create_string_utf8(env, strcat(hello, n), NAPI_AUTO_LENGTH, &result); // Æ´½Ó×Ö·û´®
+	napi_get_cb_info(env, info, &argc, &argv, NULL, NULL);                     // è·å–æ¥æ”¶å‚æ•°
+	napi_get_value_string_utf8(env, argv, n, sizeof(n), NULL);                 // å°†æ¥æ”¶åˆ°çš„å‚æ•°è½¬æ¢ä¸º C è¯­è¨€ç±»å‹
+	napi_create_string_utf8(env, strcat(hello, n), NAPI_AUTO_LENGTH, &result); // æ‹¼æ¥å­—ç¬¦ä¸²
 
 	return result;
 }
 
 napi_value Init(napi_env env, napi_value exports) {
-	// ÃèÊö hello ÊôĞÔ
+	// æè¿° hello å±æ€§
 	napi_property_descriptor desc = {
 		"hello",
 		NULL,
@@ -26,7 +26,7 @@ napi_value Init(napi_env env, napi_value exports) {
 		NULL,
 		napi_default,
 		NULL };
-	// ½« hello ¹ÒÔØµ½ exports ÉÏÃæ === require('hello.node').hello;
+	// å°† hello æŒ‚è½½åˆ° exports ä¸Šé¢ === require('hello.node').hello;
 	napi_define_properties(env, exports, 1, &desc);
 
 	return exports;
