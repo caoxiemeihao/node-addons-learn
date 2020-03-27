@@ -1,0 +1,1 @@
+const addon = require('../build/Release/call_dll.node');

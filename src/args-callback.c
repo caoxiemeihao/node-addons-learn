@@ -6,7 +6,7 @@ static void call_js() {
 
 }
 
-napi_value Init() {
+napi_value Init(napi_env env, napi_value exports) {
 
 }
 

@@ -1,0 +1,1 @@
+const addon = require('../build/Release/thread_fs.node');

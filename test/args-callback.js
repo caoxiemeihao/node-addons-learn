@@ -1,0 +1,1 @@
+const addon = require('../build/Release/args_callback.node');
