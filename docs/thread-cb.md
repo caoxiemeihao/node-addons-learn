@@ -2,7 +2,7 @@
 
 1. [C/C++ Addons 入门 Hello world!](https://www.jianshu.com/p/6b0d60672e04)
 2. [C/C++ Addons 对象参数及回调函数](https://www.jianshu.com/p/210ab7c53732)
-3. [C/C++ Addons 非阻塞多线程回调]()
+3. [C/C++ Addons 非阻塞多线程回调](https://www.jianshu.com/p/7dacbc9aa8f7)
 4. C/C++ Addons windows 下 .dll 动态链接库 **实用篇**
 
 > [完整代码](https://github.com/caoxiemeihao/node-addons-learn)
