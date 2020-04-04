@@ -9,8 +9,8 @@
       "sources": [ "src/args-callback.c" ],
     },
     {
-      "target_name": "thread_fs",
-      "sources": [ "src/thread-fs.c" ],
+      "target_name": "thread_cb",
+      "sources": [ "src/thread-cb.c" ],
     },
     {
       "target_name": "call_dll",

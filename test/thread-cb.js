@@ -1,4 +1,4 @@
-const addon = require('../build/Release/thread_fs.node');
+const addon = require('../build/Release/thread_cb.node');
 
 let second = 0;
 let cb_exucted = false;

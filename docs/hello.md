@@ -19,6 +19,7 @@
   * `gyp` 即 `generate your package`，将你的 `C/++` 代码编译成 `node.js` 可识别的文件
   * 类似 `webpack` 将 `vue、jsx` 等方言编译成为浏览器可识别文件
   * 也可以用 cMake.js 做同样的事情
+  *  `.node` 文件在 windows 平台下既 `.dll` 在 *nix 平台下 `.so` 文件，`.node` 的尾缀只是看起来 `自然些` *(20.0404 - 深入浅出node.js)*
 - `python`
   * 因为 `node-gyp` 是用 `python` 写的
   * 不止一个博客中说只能用 `python2.7` - **骗人的**🤬
@@ -41,7 +42,7 @@
   * `N-API` 没出来之前主要的插件开发方式
   * “虽然”依赖 `node.js` 版本，但是维护团队很卖力，帮忙做好了每个版本的编译所以就 **不依赖** `node.js` 版本了 👍
 - [原生 C/C++](https://nodejs.org/dist/latest-v12.x/docs/api/addons.html)
-  - 极度复杂，需要用一些 `v8` api、源码
+  - 极度复杂，需要用一些 `v8` `libuv` 之类的源码姿势
   - 依赖 `node.js` 版本，所以很难用 👎
 
 
@@ -49,7 +50,7 @@
 
 1. 安装依赖
 ```bash
-yarn add -D node-gyp # 就这一个依赖就够了
+$ yarn add -D node-gyp # 就这一个依赖就够了
 ```
 - 个人很喜欢安装到项目里面，而不是 `yarn add -g node-gyp`
 - package.js 配置 `scripts`
@@ -100,36 +101,40 @@ $ yarn configure
 
 - 一些 API 说明
 ```
-  - `napi_status` 枚举
-    * 调用任意 N-API 后返回值类型
-  - `napi_extended_error_info` 结构体
-    * 表示调用 N-API 后发生的错误对象
-  - `napi_env` 结构体
-    * 告诉 N-API 当前执行上下文，在调用 Addons 时自动(Init)传入
-    * 调用任意多个、或嵌套 N-API 时候需要一直传递下去，不允许重用
-  - `napi_callback_info` 
-    * 用于 Addons 获取 js 调用时候传入的上下文信息，如参数
-  - `napi_value` 不透明指针
-    * N-API 提供的在 C、js 中间的一种数据类型
-    * 任意的 js 数据类型都可以赋值给 napi_value，然后通过 N-API 提供的方法再把 napi_value 转成 C 语言的类型，反之亦然
-  - `napi_threadsafe_function` 不透明指针
-    * 代表一个 js 的 function，在多线程模式下通过 `napi_call_threadsafe_function` 调用实现异步 😁
+  napi_status 枚举
+    · 调用任意 N-API 后返回值类型
+  napi_extended_error_info 结构体
+    · 表示调用 N-API 后发生的错误对象
+  napi_env 结构体
+    · 告诉 N-API 当前执行上下文，在调用 Addons 时自动(Init)传入
+    · 调用任意多个、或嵌套 N-API 时候需要一直传递下去，不允许重用
+  napi_callback_info 
+    · 用于 Addons 获取 js 调用时候传入的上下文信息，如参数
+  napi_value 不透明指针
+    · N-API 提供的在 C、js 中间的一种数据类型
+    · 任意的 js 数据类型都可以赋值给 napi_value，然后通过 N-API 提供的方法再把 napi_value 转成 C 语言的类型，反之亦然
+  napi_threadsafe_function 不透明指针
+    · 代表一个 js 的 function，在多线程模式下通过 napi_call_threadsafe_function 调用实现异步 😁
 
   # 函数
-  - `napi_create_string_utf8`
-    * 创建 napi 类型的 string
-    * 相当于 const str = 'Hello world!'
-  - `napi_get_property`
-    * 从 napi 类型的对象中取值
-    * 相当于对 json = { name: 'anan', age: 29 } 取值: console.log(json.name, json.age)
-  - `napi_get_cb_info`
-    * 用于获取 js 的回调函数
-  - `napi_call_function`
-    * Addons 调用 js 回调
-  - `napi_create_function`
-    * 创建 js 函数
-  - `napi_get_global`
-    * 在 Addons 中获取 js 的 global 对象
+  napi_create_string_utf8
+    · 创建 napi 类型的 string
+    · 相当于 const str = 'Hello world!'
+  napi_get_property
+    · 从 napi 类型的对象中取值
+    · 相当于对 json = { name: 'anan', age: 29 } 取值: console.log(json.name, json.age)
+
+  napi_get_cb_info
+    · **** 这个可以说是最重要的 API 了，再怎么强调也不为过 ****
+    · 用于获取 js 的入参；如原始值类型、对象类型，甚至拿到 function 类型的指针地址
+    · 可以说是 js 和 N-NAP 之前的桥梁
+
+  napi_call_function
+    · Addons 调用 js 回调
+  napi_create_function
+    · 创建 js 函数
+  napi_get_global
+    · 在 Addons 中获取 js 的 global 对象
 
 ```
 
@@ -176,17 +181,17 @@ NAPI_MODULE(NODE_GYP_MODULE_NAME, Init)
 
 > ps: 编写好C代码后，Ctrl+Shift+b (VS编译快捷键)
 
-- javascript `index.js`
+- javascript `test/hello.js`
 ```js
-// const addon = require('./build/Debug/hello.node'); // 如果 VS 编译模式是 Debug
-const addon = require('./build/Release/hello.node'); // 如果 VS 编译模式是 Release
+// const addon = require('../build/Debug/hello.node'); // 如果 VS 编译模式是 Debug
+const addon = require('../build/Release/hello.node'); // 如果 VS 编译模式是 Release
 
 console.log(addon.hello('world!'));
 ```
 
 - 运行
 ```bash
-$ node index.js
+$ node test/hello.js
 Hello world!
 ```
 `Boom Shakalaka`
