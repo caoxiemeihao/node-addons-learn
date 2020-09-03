@@ -1,3 +1,7 @@
+#### [完整文章在简书 https://www.jianshu.com/u/ad3b2e000ea2](https://www.jianshu.com/u/ad3b2e000ea2)
+
+---
+
 ## Addons 实例
 - Hello world
   * src/hello.c
